@@ -1,5 +1,5 @@
 class Constant:
-    def __init__(self, name, unit="", value=0):
+    def __init__(self, name="", unit="", value=0):
         self.value = value
         self.name = name
         self.unit = unit

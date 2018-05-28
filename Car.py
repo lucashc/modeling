@@ -1,40 +1,43 @@
-from model import Model, Stream, Variable, Constant
+from model import Model
+from model import Variable as V
+from model import Constant as C
+from model import Stream as S
 
 # Define model
-model = Model("Car", 300) # 300 seconds of modeling
+model = Model("Car", dt=0.1, max_t=300) # 300 seconds of modeling
 
 # Constants
-Froll = Constant("Froll", "N", 1000) # Roll resistance
-k = Constant("k", "", 10) # Air resistance coefficient
-m_base = Constant("m_base", "kg", 1000) # Base mass
-rch = Constant("rch", "J/kg", 46e6) # Combustion energy density
-Fm = Constant("Fm", "N", 1010) # Motor force
+Froll = C(unit="N", value=1000) # Roll resistance
+k = C(value=0.1) # Air resistance coefficient
+m_base = C(unit="kg", value=1000) # Base mass
+rch = C(unit="J/kg", value=46e6) # Combustion energy density
+Fm = C(unit="N", value=1050) # Motor force
 
-# Variables
+# Variabless
 
-s = Variable("s", "m") # Distance
-v = Variable("v", "m/s") # Velocity
-a = Variable("a", "m/s^2") # Acceleration
+s = V(unit="m") # Distance
+v = V(unit="m/s") # Velocity
+a = V(unit="m/s^2") # Acceleration
 a.define("Fnetto/m")
 
-Pm = Variable("Pm", "J/s")
+Pm = V(unit="J/s")
 Pm.define("Fnetto*v")
 
-m_fuel = Variable("m_fuel", "kg", 10) # Fuel mass
+m_fuel = V(unit="kg", start=10) # Fuel mass
 
-m = Variable("m", "kg", m_base.value + m_fuel.value)
+m = V(unit="kg", start=m_base.value + m_fuel.value)
 m.define("m_base+m_fuel")
 
-Flw = Variable("Flw", "N")
+Flw = V(unit="N")
 Flw.define("k*v**2")
 
-Fnetto = Variable("Fnetto", "N") # Netto force
+Fnetto = V(unit="N") # Netto force
 Fnetto.define("Fm-Froll-Flw")
 
 # Connections
-s < Stream("v*dt") # Distance increases with speed
-v < Stream("a*dt") # Velocity increases with acceleration
-m_fuel > Stream("Pm*dt/rch") # Fuel decreases with motor power
+s < S("v*dt") # Distance increases with speed
+v < S("a*dt") # Velocity increases with acceleration
+m_fuel > S("Pm*dt/rch") # Fuel decreases with motor power
 
 # Start model
 model.add_scope(locals())

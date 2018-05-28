@@ -3,8 +3,11 @@ from model.variable import Variable
 
 
 class Model:
-    def __init__(self, name, max_t, dt=0.1):
-        self.max_t = max_t
+    def __init__(self, name, max_t=1000, dt=0.1, infinite=False):
+        if infinite:
+            self.max_t = float("inf")
+        else:
+            self.max_t = max_t
         self.name = name
         self.vars = {}
         self.dt = 0.1
@@ -19,9 +22,13 @@ class Model:
             self.vars[i.name] = i
     
     def add_scope(self, scope):
-        for i in scope.values():
+        for key, i in scope.items():
             if isinstance(i, Constant) or isinstance(i, Variable):
-                self.vars[i.name] = i
+                if i.name == "":
+                    i.name = key
+                    self.vars[key] = i
+                else:
+                    self.vars[i.name] = i
 
     def compose_environment(self):
         environment = {}

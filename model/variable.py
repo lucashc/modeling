@@ -1,8 +1,8 @@
 from model.streams import Stream
 
 class Variable:
-    def __init__(self, name, unit="",start_value=0):
-        self.value = start_value
+    def __init__(self, name="", unit="",start=0):
+        self.value = start
         self.streams = []
         self.name = name
         self.definition = ""
