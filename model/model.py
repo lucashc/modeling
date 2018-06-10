@@ -1,6 +1,6 @@
 from model.constant import Constant
 from model.variable import Variable
-import inspect
+import copy
 
 class _Model:
     
@@ -15,6 +15,11 @@ class _Model:
         self.t = 0
         self.stops = []
     
+    def set_vars(self,**kwargs):
+        for key,item in kwargs.items():
+            if key in self.vars and isinstance(self.vars[key], Constant):
+                self.vars[key].value = item
+
     def add_var(self, obj):
         self.vars[obj.name] = obj
 
@@ -27,9 +32,9 @@ class _Model:
             if isinstance(i, Constant) or isinstance(i, Variable):
                 if i.name == "":
                     i.name = key
-                    self.vars[key] = i
+                    self.vars[key] = copy.copy(i)
                 else:
-                    self.vars[i.name] = i
+                    self.vars[i.name] = copy.copy(i)
 
     def compose_environment(self):
         environment = {}
@@ -109,6 +114,7 @@ class Model(_Model):
     def __init__(self,*args,**kwargs):
         super().__init__(self.kwargs)
         self.add_scope(self.__class__.__dict__)
+        self.set_vars(**kwargs)
 
     def __init_subclass__(cls,**kwargs):
         cls.kwargs = kwargs

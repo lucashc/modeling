@@ -41,7 +41,7 @@ class model(Model,name="Car",dt=0.1,max_t=300):
 	v < S("a*dt") # Velocity increases with acceleration
 	m_fuel > S("Pm*dt/rch") # Fuel decreases with motor power
 
-m = model()
+m = model(Froll=10000)
 
 # Start model
 m.add_stop("m_fuel <= 0")
