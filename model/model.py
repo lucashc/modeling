@@ -1,8 +1,9 @@
 from model.constant import Constant
 from model.variable import Variable
+import inspect
 
-
-class Model:
+class _Model:
+    
     def __init__(self, name, max_t=1000, dt=0.1, infinite=False):
         if infinite:
             self.max_t = float("inf")
@@ -87,14 +88,28 @@ class Model:
     
     def plot(self, var):
         if self.import_matplotlib():
-           self. plt.plot(self.save[var], label=var)
+           self.plt.plot(self.save[var], label=var)
     
     def show(self):
-        self.plt.legend()
+        if self.import_matplotlib():
+            self.plt.legend()
         self.plt.show()
-    
+        
+
     def __repr__(self):
         base = f"Model {self.name}, duration: {self.max_t} s"
         for i in self.vars.values():
             base += f"\n{i}"
         return base
+
+
+
+class Model(_Model):
+    kwargs = {}
+    def __init__(self,*args,**kwargs):
+        super().__init__(self.kwargs)
+        self.add_scope(self.__class__.__dict__)
+
+    def __init_subclass__(cls,**kwargs):
+        cls.kwargs = kwargs
+        super().__init_subclass__()
